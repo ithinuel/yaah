@@ -1,12 +1,15 @@
+use std::collections::HashMap;
+use std::fmt::Display;
+
 use proc_macro2::Span;
 use syn::parse::Parse;
 use syn::punctuated::Punctuated;
-use syn::{parse, ItemFn};
+use syn::{parse, GenericArgument, PathArguments, Type};
 
 #[derive(Debug, Clone)]
 pub struct Solution {
-    pub generator: Option<String>,
-    pub runner: Option<String>,
+    pub generator: Option<Span>,
+    pub solver: Option<Span>,
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
@@ -18,18 +21,47 @@ pub struct DayPartName {
 
 impl DayPartName {
     pub fn to_camelcase(&self) -> String {
-        match (self.part, &self.name) {
-            (Some(part), Some(name)) => format!("Day{}Part{}{}", self.day, part, name),
-            (Some(part), None) => format!("Day{}Part{}", self.day, part),
-            (None, None) => format!("Day{}", self.day),
-            (None, Some(_)) => unreachable!(),
-        }
+        format!("{}", self)
     }
     pub fn to_snakecase(&self) -> String {
         match (self.part, &self.name) {
             (Some(part), Some(name)) => format!("day{}_part{}_{}", self.day, part, name),
             (Some(part), None) => format!("day{}_part{}", self.day, part),
             (None, None) => format!("day{}", self.day),
+            (None, Some(_)) => unreachable!(),
+        }
+    }
+    pub fn resolve_alternate(&self, map: &HashMap<Self, Solution>) -> Option<Self> {
+        let mut alt = DayPartName {
+            part: None,
+            ..self.clone()
+        };
+        if self.part.is_some() && self.name.is_some() {
+            if map
+                .get(&alt)
+                .map(|alt| alt.generator.is_some())
+                .unwrap_or(false)
+            {
+                return Some(alt);
+            }
+        }
+        alt.name = None;
+        if map
+            .get(&alt)
+            .map(|alt| alt.generator.is_some())
+            .unwrap_or(false)
+        {
+            return Some(alt);
+        }
+        None
+    }
+}
+impl Display for DayPartName {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match (self.part, &self.name) {
+            (Some(part), Some(name)) => write!(f, "Day{}Part{}{}", self.day, part, name),
+            (Some(part), None) => write!(f, "Day{}Part{}", self.day, part),
+            (None, None) => write!(f, "Day{}", self.day),
             (None, Some(_)) => unreachable!(),
         }
     }
@@ -88,6 +120,36 @@ impl Parse for DayPartName {
         Ok(Self { day, part, name })
     }
 }
+
+pub enum ResultType {
+    Plain(Type),
+    Option(Type),
+    Result(Type),
+}
+pub fn extract_result_type(out: syn::Type) -> ResultType {
+    match &out {
+        Type::Path(type_path) => {
+            // there's always a last element
+            let last = type_path.path.segments.last().unwrap();
+            let last_ident = last.ident.to_string();
+            if last_ident == "Option" || last_ident == "Result" {
+                let wrapper = if last_ident == "Option" {
+                    ResultType::Option
+                } else {
+                    ResultType::Result
+                };
+                if let PathArguments::AngleBracketed(bracketed) = &last.arguments {
+                    if let Some(GenericArgument::Type(typ)) = bracketed.args.first() {
+                        return wrapper(typ.clone());
+                    }
+                }
+            }
+        }
+        _ => {}
+    };
+    ResultType::Plain(out)
+}
+
 #[cfg(test)]
 mod test {
     use super::DayPartName;

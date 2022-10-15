@@ -1,7 +1,10 @@
 [package]
-name = "aoc-helper"
-version = "0.1.0"
+name = "yaah"
+version = "0.2.0"
+authors = [ "Wilfried Chauveau <wilfried.chauveau@ithinuel.me>" ]
+description = "YAAH – Yet Another AOC Helper"
 edition = "2021"
+license = "MIT"
 
 [lib]
 proc-macro = true
@@ -12,3 +15,8 @@ quote = "1.0.2"
 proc-macro2 = "1.0.5"
 proc-macro-error = "1.0.4"
 itertools = "0.10.5"
+reqwest = { version = "0.11", features = ["blocking", "cookies"] }
+anyhow = "1.0.0"
+
+[dev-dependencies]
+clap = { version = "4.0", features = ["derive"] }
