@@ -3,6 +3,8 @@ name = "yaah"
 version = "0.2.0"
 authors = [ "Wilfried Chauveau <wilfried.chauveau@ithinuel.me>" ]
 description = "YAAH – Yet Another AOC Helper"
+documentation = "https://docs.rs/yaah"
+repository = "https://github.com/ithinuel/yaah"
 edition = "2021"
 license = "MIT"
 

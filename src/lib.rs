@@ -7,16 +7,15 @@
 //! ## Setup
 //!
 //! This helper will automatically fetch your personnal input file provided you set your AOC
-//! session id cookie in the `AOC_SESSION_ID` environment variable. This can be either done through
+//! session cookie in the `AOC_SESSION` environment variable. This can be either done through
 //! your favorite shell or in a `.cargo/config.toml` file as such:
 //! ```toml
 //! [env]
-//! AOC_SESSION_ID = "your_super_long_session_id_extracted_from_your_browsers_cookie_jar"
+//! AOC_SESSION = "your super long session secret extracted from your browser's cookie jar"
 //! ```
 //!
 //! Note that this `.cargo` directory can reside in a parent directory of your project allowing you
-//! to have a project specific version controlled cargo config file without leaking your secret
-//! session id.
+//! to have a project specific version controlled cargo config file without leaking your session secret.
 //!
 //! If you want to benefit from the auto-generated main function, you will need to add a
 //! dependency to clap.
@@ -412,7 +411,7 @@ pub fn aoc_lib(args: pm::TokenStream) -> pm::TokenStream {
 
             let input_file = utils::fetch_input(year, dpn.day).map_err(|e| {
                 Diagnostic::new(Level::Error, "Failed to fetch input file".to_string())
-                    .help("Check that the session ID is set in `AOC_SESSION_ID` and that your network is working.".to_string())
+                    .help("Check that the session secret is set in `AOC_SESSION` and that your network is working.".to_string())
                     .note(format!("The inner error is: {}", e.to_string()))
             }).expect_or_abort("Failed to fetch input file");
 

@@ -11,8 +11,8 @@ pub fn fetch_input(year: usize, day: usize) -> Result<String, anyhow::Error> {
     if !input_file.exists() {
         use reqwest::{cookie::Jar, Url};
 
-        let session_id = std::env::var("AOC_SESSION_ID")?;
-        let cookie = format!("session={session_id}; Domain=adventofcode.com");
+        let session = std::env::var("AOC_SESSION")?;
+        let cookie = format!("session={session}; Domain=adventofcode.com");
         let url: Url = "https://adventofcode.com".parse()?;
 
         let jar = std::sync::Arc::new(Jar::default());
@@ -30,7 +30,7 @@ pub fn fetch_input(year: usize, day: usize) -> Result<String, anyhow::Error> {
         if input
             .starts_with("Puzzle inputs differ by user.  Please log in to get your puzzle input.")
         {
-            anyhow::bail!("Failed to fetch input file, check your session id");
+            anyhow::bail!("Failed to fetch input file, check your session secret");
         }
 
         std::fs::create_dir_all(input_file_path)?;

@@ -1,7 +1,18 @@
-# [AOC](https://advent-of-code.com/) helper
+# Yet Another [AOC](https://advent-of-code.com/) Helper
 
-## Input files
+[![crates.io](https://img.shields.io/crates/v/yaah.svg)](https://crates.io/crates/yaah)
 
-`aoc-helper` will automatically try to download the input file if it is not present in `input/{year}/{day}.txt`.
-For this, you need the environment variable `AOC_SESSION_ID` to be set to the `sessionid` cookie you
-can find in your browser's storage.
+## Getting started
+
+- Extract the advent of code's session cookie from your browser.
+- Create a new project using the template: `cargo generate --git https://github.com/ithinuel/yaah-template.git`.
+- Run `cargo run --release`.
+- Enjoy!
+
+## AOC Session
+
+The template stores your session in `.cargo/config.toml`. Alternatively you can define the environment
+variable `AOC_SESSION`.
+
+`yaah` will automatically download the input file and store it in `input/{year}/{day}.txt` if it is
+not present.
