@@ -25,7 +25,7 @@ pub fn fetch_input(year: usize, day: usize) -> Result<String, anyhow::Error> {
 
         let url: Url = format!("https://adventofcode.com/{}/day/{}/input", year, day).parse()?;
 
-        let input = client.get(url).send()?.text()?;
+        let input = client.get(url).send()?.error_for_status()?.text()?;
 
         if input
             .starts_with("Puzzle inputs differ by user.  Please log in to get your puzzle input.")
