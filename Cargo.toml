@@ -1,6 +1,6 @@
 [package]
 name = "yaah"
-version = "0.2.1"
+version = "0.2.2"
 authors = [ "Wilfried Chauveau <wilfried.chauveau@ithinuel.me>" ]
 description = "YAAH – Yet Another AOC Helper"
 documentation = "https://docs.rs/yaah"
