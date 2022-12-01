@@ -4,10 +4,6 @@ use clap::Parser;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    /// Enables benchmarks
-    #[arg(long)]
-    bench: bool,
-
     /// Show all days
     #[arg(short, long)]
     all: bool,
@@ -46,17 +42,6 @@ fn filter(dpn: &#lib::DayPartName, args: &Args) -> bool {
 
 fn main() {
     let args = Args::parse();
-
-    if args.bench {
-        let mut criterion = criterion::Criterion::default().configure_from_args();
-        #lib::BENCHES.iter().for_each(|bench| {
-            bench(&mut criterion);
-        });
-        criterion.final_summary();
-
-
-        return
-    }
 
     let runner = |(dpn, solver): &(
         #lib::DayPartName,
